@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Draw Features</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v5.3.0/css/ol.css" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+<!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/build/ol.js"></script>
+
+  </head>
+  <body>
+    <header class="header">
+      <div class="ctitle">
+          <h3>OMNIPRESENT ROBOTECH</h3>
+      </div>
+      <div class="ptitle">
+          <h3>PLAN MISSION</h3>
+      </div>
+    </header>
+    <div id="map" class="map"></div>
+          
+  <div class="midsection">
+    <div class="input-area">
+    <div class="inputbox">
+      <p class="field">Altitude(m)</p>
+    <input type="number" name="alt" id="alt" value="100" placeholder="altitude" required>
+    </div>
+    <div class="inputbox">
+      <p class="field">Speed(m/s)</p>
+    <input type="number" name="speed" id="speed" value="25" placeholder="speed" required>
+  </div>
+    <div class="inputbox">
+      <p class="field">Sideoverlap(%)</p>
+    <input type="number" name="sideoverlap" id="sol" value="50" placeholder="Side overlap(%)" required>
+  </div>
+    <div class="inputbox">
+      <p class="field">Frontoverlap(%)</p>
+    <input type="number" name="frontoverlap" id="fol" value="50" placeholder="Front overlap (%)" required>
+  </div>
+</div>
+<div class="ubtn">
+    <input class="form-control unbtn" type="button" value="Undo" id="undo">
+</div>
+</div>
+<div class="info">
+    <p id ="distance"></p>
+    <p id = "time"></p>
+  </div>
+<div class="mainbtn">
+    <button id="survey">Survey Grid</button>
+    <button id="upload">Upload mission</button>
+    <button id="remove">Remove</button>
+</div>
+    
+    <!-- Pointer events polyfill for old browsers, see https://caniuse.com/#feat=pointer -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/plan.js') }}"></script>
+    <script src="https://unpkg.com/elm-pep@1.0.6/dist/elm-pep.js"></script>
+    
+  </body>
+</html>

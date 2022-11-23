@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            background-color: black;
+            font-family: 'Montserrat', sans-serif;
+        }
+        h1{
+            color: white;
+        }
+        .container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            color: white;
+        }
+        input{
+            background-color: rgb(22, 22, 22);
+            border: 1px solid rgb(14, 13, 13);
+            color: white;
+            padding: 3px 0px 3px 10px;
+        }
+        .clipping{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .clip-data{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+        label{
+            padding-right: 20px;
+        }
+        body::-webkit-scrollbar{
+            display: none;
+            height: 100vh;
+        }
+        canvas{
+            height: 50vh;
+            margin: 0 30px;
+        }
+    </style>
+    <title>vibration</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Vibration</h1>
+        <canvas id="mychart"></canvas>
+    </div>
+    <div class="clipping">
+        <h1>Clipping</h1>
+        <form action="#">
+            <div class="clip-data">
+                <label for="Primary">Primary</label>
+                <input type="Primary" value="0" id="vibration-x">
+            </div>
+            <div class="clip-data">
+                <label for="Secondary">Secondary</label>
+                <input type="Secondary"  value="0" id="vibration-y">
+            </div>
+            <div class="clip-data">
+                <label for="Tertiary">Tertiary</label>
+                <input type="Tertiary" value="0" id="vibration-z">
+            </div>
+        </form>
+    </div>
+        <script src="http://smoothiecharts.org/smoothie.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/mav/Cesium/Cesium.js"></script>
+    <script src="/mav/bundle.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.2/chart.min.js"></script>
+    <script>
+        var x=0;
+        var y=0;
+        var z=0;
+        const mychart=document.getElementById('mychart').getContext('2d');
+        const barchart=new Chart(mychart,{
+            type:'bar',
+            data:{
+                labels:['x','y','z'],
+                datasets:[{
+                    label:'Vibe Data',
+                    data:[
+                        x,
+                        y,
+                        z,
+                    ],
+                    backgroundColor:'orange'
+                }]
+            },
+            options:{
+            scales: {
+                y: {
+                    min: 0,
+                    max: 100
+                }
+        }}
+        });
+         var socket;
+$(document).ready(function(){
+    //connect to the socket server.
+    socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+    socket.on('vibrvx', function(msg) {
+            let num = parseFloat(msg.message);
+            barchart['data']['datasets'][0]['data'][0] = num;
+            barchart.update();
+            });
+        socket.on('vibrvy', function(msg) {
+            let num = parseFloat(msg.message);
+           barchart['data']['datasets'][0]['data'][1] = num;
+            barchart.update();
+        });
+        socket.on('vibrvz', function(msg) {
+            let num = parseFloat(msg.message);
+            barchart['data']['datasets'][0]['data'][2] = num;
+            barchart.update();
+            });
+
+    
+        socket.on('vibrc0', function(msg) {
+            let num = parseFloat(msg.message);
+                                        document.getElementById("vibration-x").value = num.toFixed(2);
+                                    });
+                                    socket.on('vibrc1', function(msg) {
+                                        let num = parseFloat(msg.message);
+                                        document.getElementById("vibration-y").value = num.toFixed(2);
+                                    });
+                                    socket.on('vibrc2', function(msg) {
+                                        let num = parseFloat(msg.message);
+                                        document.getElementById("vibration-z").value= num.toFixed(2);
+    });
+});
+    </script>
+</body>
+</html>

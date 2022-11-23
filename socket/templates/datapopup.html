@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <title>Display this</title>
+</head>
+<body>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+        body{
+            background-color: #0E0D0D;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            font-family: 'Montserrat', sans-serif;
+        }
+        body::-webkit-scrollbar{
+            display: none;
+        }
+        form{
+            display: grid;
+            grid-template-columns:repeat(4,1fr) ;
+            height: 100vh;
+            width: 100%;
+        }
+        label{
+            margin: 0 15px 0 5px;
+        }
+        input {
+            accent-color: orange;
+            cursor: pointer;
+        }
+        input:checked~label{
+            color: orange;
+        }
+    </style>
+    <form action="#">
+        <div class="options">
+            <input id="ay" type="checkbox" name="yaw" onclick="gotchecked(this.name,this.id)";>
+            <label for="ay" class="label-bit1"> yaw</label>
+        </div>
+        <div class="options">
+            <input id="mode" type="checkbox" name="flight_mode" onclick="gotchecked(this.name,this.id)";>
+            <label for="mode" class="label-bit1"> flight_mode</label>
+        </div>
+        <div class="options">
+            <input id="gpsitb" type="checkbox" name="time_boot_ms" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsitb" class="label-bit1"> time_boot_ms</label>
+        </div>
+        <div class="options">
+            <input id="ar" type="checkbox" name="roll" onclick="gotchecked(this.name,this.id)";>
+            <label for="ar"> roll</label>
+        </div>
+        <div class="options">
+            <input id="ap" type="checkbox" name="pitch" onclick="gotchecked(this.name,this.id)";>
+            <label for="ap"> pitch</label>
+        </div>
+        <div class="options">
+            <input id="ays" type="checkbox" name="yawspeed" onclick="gotchecked(this.name,this.id)";>
+            <label for="ays"> yaw speed</label>
+        </div>
+        <div class="options">
+            <input id="ars" type="checkbox" name="rollspeed" onclick="gotchecked(this.name,this.id)";>
+            <label for="ars"> roll speed</label>
+        </div>
+        <div class="options">
+            <input id="aps" type="checkbox" name="pitchspeed" onclick="gotchecked(this.name,this.id)";>
+            <label for="aps"> pitch speed</label>
+        </div>
+        <div class="options">
+            <input id="gpsivx" type="checkbox" name="vx" onclick="gotchecked(this.name,this.id)";>
+            <label for="vx"> vx</label>
+        </div>
+        <div class="options">
+            <input id="gpsivy" type="checkbox" name="vy" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsivy"> vy</label>
+        </div>
+        <div class="options">
+            <input id="gpsivz" type="checkbox" name="vz" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsivz"> vz</label>
+        </div>
+        <div class="options">
+            <input id="gpsihdg" type="checkbox" name="hdg" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsihdg"> hdg</label>
+        </div>
+        <div class="options">
+            <input id="gpsiralt" type="checkbox" name="relativealtitude" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsiralt"> relative altitude</label>
+        </div>
+                <div class="options">
+            <input id="gpsialt" type="checkbox" name="relativealtitude" onclick="gotchecked(this.name,this.id)";>
+            <label for="gpsialt"> relative altitude</label>
+        </div>
+        <div class="options">
+            <input id="sysocse" type="checkbox" name="onboard_control_sensors_enabled" onclick="gotchecked(this.name,this.id)">
+            <label for="sysocse"> onboard control sensors enabled</label>
+        </div>
+        <div class="options">
+            <input id="sysocsp" type="checkbox" name="onboard_control_sensors_present" onclick="gotchecked(this.name,this.id)">
+            <label for="sysocsp"> onboard control sensors present</label>
+        </div>
+        <div class="options">
+            <input id="coordinate_frame" type="checkbox" name="coordinate_frame" onclick="gotchecked(this.name,this.id)">
+            <label for="coordinate_frame">coordinate_frame</label>
+        </div>
+        <div class="options">
+            <input id="sysocsh" type="checkbox" name="onboard_control_sensorse_health" onclick="gotchecked(this.name,this.id)">
+            <label for="sysocsh"> onboard control sensors health</label>
+        </div>
+        <div class="options">
+
+            <input id="sysbr" type="checkbox" name="battery_remaining" onclick="gotchecked(this.name,this.id)">
+            <label for="sysbr"> battery remaining</label>
+        </div>
+        <div class="options">
+
+            <input id="syscb" type="checkbox" name="current_battery" onclick="gotchecked(this.name,this.id)">
+            <label for="syscb"> current battery</label>
+        </div>
+        <div class="options">
+
+            <input id="sysvb" type="checkbox" name="voltage_battery" onclick="gotchecked(this.name,this.id)">
+            <label for="sysvb"> voltage battery</label>
+        </div>
+        <div class="options">
+            <input id="dropratecommunication" type="checkbox" name="dropratecommunication" onclick="gotchecked(this.name,this.id)">
+            <label for="dropratecommunication"> droprate communication</label>
+        </div>
+        <div class="options">
+            <input id="sysecomm" type="checkbox" name="errors_comm" onclick="gotchecked(this.name,this.id)">
+            <label for="sysescomm"> errors comm</label>
+        </div>
+        <div class="options">
+            <input id="sysecount1" type="checkbox" name="errors_count_1" onclick="gotchecked(this.name,this.id)">
+            <label for="sysecount1"> errors count1</label>
+        </div>
+        <div class="options">
+            <input id="sysecount2" type="checkbox" name="errors_count2" onclick="gotchecked(this.name,this.id)">
+            <label for="sysecount2"> errors count2</label>
+        </div>
+        <div class="options">
+            <input id="sysecount3" type="checkbox" name="errors_count3" onclick="gotchecked(this.name,this.id)">
+            <label for="sysecount3"> errors count3</label>
+        </div>
+        <div class="options">
+            <input id="sysecount4" type="checkbox" name="errorscount4" onclick="gotchecked(this.name,this.id)">
+            <label for="sysecount4"> errors count4</label>
+        </div>
+        <div class="options">
+            <input id="sysload" type="checkbox" name="load" onclick="gotchecked(this.name,this.id)">
+            <label for="sysload"> load</label>
+        </div>
+        <div class="options">
+            <input id="psvs" type="checkbox" name="vservo" onclick="gotchecked(this.name,this.id)">
+            <label for="psvs"> vservo</label>
+        </div>
+        <div class="options">
+            <input id="psflags" type="checkbox" name="flags" onclick="gotchecked(this.name,this.id)">
+            <label for="psflags"> flags</label>
+        </div>
+        <div class="options">
+            <input id="psvcc" type="checkbox" name="vcc" onclick="gotchecked(this.name,this.id)">
+            <label for="psvcc"> vcc</label>
+        </div>
+        <div class="options">
+            <input id="mifm32" type="checkbox" name="freemem32" onclick="gotchecked(this.name,this.id)">
+            <label for="mifm32"> freemem32</label>
+        </div>
+        <div class="options">
+            <input id="mifm" type="checkbox" name="freemem" onclick="gotchecked(this.name,this.id)">
+            <label for="mifm"> freemem</label>
+        </div>
+        <div class="options">
+            <input id="nconr" type="checkbox" name="navroll" onclick="gotchecked(this.name,this.id)">
+            <label for="nconr"> nav roll</label>
+        </div>
+        <div class="options">
+            <input id="mconbg" type="checkbox" name="nav_bearing" onclick="gotchecked(this.name,this.id)">
+            <label for="mconb"> nav bearing</label>
+        </div>
+        <div class="options">
+            <input id="mcotb" type="checkbox" name="target_bearing" onclick="gotchecked(this.name,this.id)">
+            <label for="mcotb"> target bearing</label>
+        </div>
+        <div class="options">
+            <input id="mcowpd" type="checkbox" name="way_point_distance" onclick="gotchecked(this.name,this.id)">
+            <label for="mcowpd"> waypoint distance</label>
+        </div>
+        <div class="options">
+            <input id="mcoalte" type="checkbox" name="altitude_errors" onclick="gotchecked(this.name,this.id)">
+            <label for="mcoalte "> altitude errors</label>
+        </div>
+        <div class="options"> 
+            <input id="mcoaspde" type="checkbox" name="aspderror" onclick="gotchecked(this.name,this.id)">
+            <label for="mcoaspde"> aspd error</label>
+        </div>
+        <div class="options">
+            <input id="mcoxte" type="checkbox" name="extrack_error" onclick="gotchecked(this.name,this.id)">
+            <label for="mcoxte"> extrack error</label>
+        </div>
+        <div class="options">
+            <input id="mconp" type="checkbox" name="nav_pitch" onclick="gotchecked(this.name,this.id)">
+            <label for="mconp"> nav pitch</label>
+        </div>
+        <div class="options">
+            <input id="mcseq" type="checkbox" name="mission_current_seq" onclick="gotchecked(this.name,this.id)">
+            <label for="mcseq "> mission current seq </label>
+        </div>
+        <div class="options">
+            <input id="sorport" type="checkbox" name="serverport" onclick="gotchecked(this.name,this.id)">
+            <label for="sorport"> server port</label>
+        </div>
+        <div class="options">
+            <input id="sors1r" type="checkbox" name="servo1_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors1r"> servo1_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors2r" type="checkbox" name="servo2_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors2r"> servo2_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors3r" type="checkbox" name="servo3_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors3r"> servo3_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors4r" type="checkbox" name="servo4_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors4r"> servo4_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors5r" type="checkbox" name="servo5_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors5r"> servo5_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors6r" type="checkbox" name="servo6_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors6r"> servo6_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors7r" type="checkbox" name="servo7_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors7r"> servo7_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors8r" type="checkbox" name="servo8_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors8r"> servo8_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors9r" type="checkbox" name="servo9_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors9r"> servo9_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors10r" type="checkbox" name="servo10_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors10r"> servo10_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors11r" type="checkbox" name="servo11_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors11r"> servo11_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors12r" type="checkbox" name="servo12_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors12r"> servo12_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors13r" type="checkbox" name="servo13_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors13r"> servo13_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors14r" type="checkbox" name="servo14_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors15r"> servo14_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors15r" type="checkbox" name="servo15_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors15r"> servo15_raw</label>
+        </div>
+        <div class="options">
+            <input id="sors16r" type="checkbox" name="servo16_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="sors16r"> servo16_raw</label>
+        </div>
+        <div class="options">
+            <input id="rccc" type="checkbox" name="chancount" onclick="gotchecked(this.name,this.id)">
+            <label for="rccc"> chancount</label>
+        </div>
+        <div class="options">
+            <input id="rcc1r" type="checkbox" name="chan1_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc1r"> chan1_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc2r" type="checkbox" name="chan2_raw " onclick="gotchecked(this.name,this.id)">
+            <label for="rcc2r"> chan2_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc3r" type="checkbox" name="chan3_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc3r"> chan3_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc4r" type="checkbox" name="chan4_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc4r"> chan4_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc5r" type="checkbox" name="chan5_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc5r"> chan5_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc6r" type="checkbox" name="chan6_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc6r"> chan6_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc7r" type="checkbox" name="chan7_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc7r"> chan7_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc8r" type="checkbox" name="chan8_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc8r"> chan8_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc9r" type="checkbox" name="chan9_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc9r"> chan9_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc10r" type="checkbox" name="chan10_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc10r"> chan10_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc11r" type="checkbox" name="chan11_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc11r"> chan11_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc12r" type="checkbox" name="chan12_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc12r"> chan12_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc13r" type="checkbox" name="chan13_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc13r"> chan13_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc14r" type="checkbox" name="chan14_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc14r"> chan14_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc15r" type="checkbox" name="chan15_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc15r"> chan15_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc16r" type="checkbox" name="chan16_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc16r"> chan16_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc17r" type="checkbox" name="chan17_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc17r"> chan17_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcc18r" type="checkbox" name="chan18_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcc18r"> chan18_raw</label>
+        </div>
+        <div class="options">
+            <input id="rcrssi" type="checkbox" name="chan18_raw" onclick="gotchecked(this.name,this.id)">
+            <label for="rcrssi"> rssi</label>
+        </div>
+        <div class="options">
+            <input id="gpsilat" type="checkbox" name="gps_lat" onclick="gotchecked(this.name,this.id)">
+            <label for="gpsilat"> gps_lat</label>
+        </div>
+        <div class="options">
+            <input id="gpsilong" type="checkbox" name="gps_long" onclick="gotchecked(this.name,this.id)">
+            <label for="gpsilong"> gps_long</label>
+        </div>
+        <div class="options">
+            <input id="gpsiyaw" type="checkbox" name="gps_yaw" onclick="gotchecked(this.name,this.id)">
+            <label for="gpsiyaw"> gps_yaw</label>
+        </div>
+        <div class="options">
+            <input id="grihac" type="checkbox" name="h-acc" onclick="gotchecked(this.name,this.id)">
+            <label for="grihac"> h-acc</label>
+        </div>
+        <div class="options">
+            <input id="grivac" type="checkbox" name="v-acc" onclick="gotchecked(this.name,this.id)">
+            <label for="grivac"> v-acc</label>
+        </div>
+        <div class="options">
+            <input id="grivela" type="checkbox" name="vel-acc" onclick="gotchecked(this.name,this.id)">
+            <label for="grivela"> vel-acc</label>
+        </div>
+        <div class="options">
+            <input id="grihdga" type="checkbox" name="hdg-acc" onclick="gotchecked(this.name,this.id)">
+            <label for="grihdga"> hdg-acc</label>
+        </div>
+        <div class="options">
+            <input id="griyaw" type="checkbox" name="gri-yaw" onclick="gotchecked(this.name,this.id)">
+            <label for="griyaw"> gri-yaw</label>
+        </div>
+        <div class="options">
+            <input id="ahrsoix" type="checkbox" name="omegaIx" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsoix"> omegaIx</label>
+        </div>
+        <div class="options">
+            <input id="ahrsoiy" type="checkbox" name="omegaIy" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsoiy"> omegaIy</label>
+        </div>
+        <div class="options">
+            <input id="ahrsoiz" type="checkbox" name="omegaIz" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsoiz"> omegaIz</label>
+        </div>
+        <div class="options">
+            <input id="ahrsaw" type="checkbox" name="accel-weight" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsaw"> accel-weight</label>
+        </div>
+        <div class="options">
+            <input id="ahrsrv" type="checkbox" name="renew-vel" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsrv"> renew-vel</label>
+        </div>
+        <div class="options">
+            <input id="ahrser" type="checkbox" name="error_rp" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrser"> error_rp</label>
+        </div>
+        <div class="options">
+            <input id="ahrsey" type="checkbox" name="error_yaw" onclick="gotchecked(this.name,this.id)">
+            <label for="ahrsey"> error_yaw</label>
+        </div>
+        <div class="options">
+            <input id="hsvc" type="checkbox" name="hs-vcc" onclick="gotchecked(this.name,this.id)">
+            <label for="hsvc"> vcc</label>
+        </div>
+        <div class="options">
+            <input id="hsie" type="checkbox" name="I2cerr" onclick="gotchecked(this.name,this.id)">
+            <label for="hsie"> I2cerr</label>
+        </div>
+        <div class="options">
+            <input id="windd" type="checkbox" name="wind-direction" onclick="gotchecked(this.name,this.id)">
+            <label for="windd"> wind-direction</label>
+        </div>
+        <div class="options">
+            <input id="winds" type="checkbox" name="wind-speed" onclick="gotchecked(this.name,this.id)">
+            <label for="winds"> wind-speed</label>
+        </div>
+        <div class="options">
+            <input id="windsz" type="checkbox" name="wind-speed2" onclick="gotchecked(this.name,this.id)">
+            <label for="windsz"> wind-speed2</label>
+        </div>
+        <div class="options">
+            <input id="trlat" type="checkbox" name="tr_lat" onclick="gotchecked(this.name,this.id)">
+            <label for="trlat"> tr_lat</label>
+        </div>
+        <div class="options">
+            <input id="trlong" type="checkbox" name="tr_long" onclick="gotchecked(this.name,this.id)">
+            <label for="trlong"> tr_long</label>
+        </div>
+        <div class="options">
+            <input id="trs" type="checkbox" name="tr_spacing" onclick="gotchecked(this.name,this.id)">
+            <label for="trs"> tr_spacing</label>
+        </div>
+        <div class="options">
+            <input id="trth" type="checkbox" name="tr_terrain_height" onclick="gotchecked(this.name,this.id)">
+            <label for="trth"> tr_terrain_height</label>
+        </div>
+        <div class="options">
+            <input id="trch" type="checkbox" name="tr_current_height" onclick="gotchecked(this.name,this.id)">
+            <label for="trch"> tr_current_height</label>
+        </div>
+        <div class="options">
+            <input id="trp" type="checkbox" name="tr_pending" onclick="gotchecked(this.name,this.id)">
+            <label for="trp"> tr_pending</label>
+        </div>
+        <div class="options">
+            <input id="trl" type="checkbox" name="tr_loading" onclick="gotchecked(this.name,this.id)">
+            <label for="trl"> tr_loading</label>
+        </div>
+        <div class="options">
+            <input id="esrvv" type="checkbox" name="velocity_variance" onclick="gotchecked(this.name,this.id)">
+            <label for="esrvv"> velocity_variance</label>
+        </div>
+        <div class="options">
+            <input id="esrphv" type="checkbox" name="pos_varing_variance" onclick="gotchecked(this.name,this.id)">
+            <label for="esrphv"> pos_varing_variance</label>
+        </div>
+        <div class="options">
+            <input id="esrtav" type="checkbox" name="terrain_alt_variance" onclick="gotchecked(this.name,this.id)">
+            <label for="esrtav"> terrain_alt_variance</label>
+        </div>
+        <div class="options">
+            <input id="esrav" type="checkbox" name="airspeed_variance" onclick="gotchecked(this.name,this.id)">
+            <label for="esrav"> airspeed_variance</label>
+        </div>
+        <div class="options">
+            <input id="esrcv" type="checkbox" name="compass_variance"  onclick="gotchecked(this.name,this.id)">
+            <label for="esrcv"> compass_variance</label>
+        </div>
+        <div class="options">
+            <input id="esrpvv" type="checkbox" name="pos_vert_variance"  onclick="gotchecked(this.name,this.id)">
+            <label for="esrpvv"> pos_vert_variance</label>
+        </div>
+        <div class="options">
+            <input id="vibrvx" type="checkbox" name="vibration-x" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrvx"> vibration-x</label>
+        </div>
+        <div class="options">
+            <input id="vibrvy" type="checkbox" name="vibration-y" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrvy"> vibration-y</label>
+        </div>
+        <div class="options">
+            <input id="vibrvz" type="checkbox" name="vibration-z" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrvz"> vibration-z</label>
+        </div>
+        <div class="options">
+            <input id="vibrc0" type="checkbox" name="clipping-0" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrc0"> clipping-0</label>
+        </div>
+        <div class="options">
+            <input id="vibrc1" type="checkbox" name="clipping-1" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrc1"> clipping-1</label>
+        </div>
+        <div class="options">
+            <input id="vibrc2" type="checkbox" name="clipping-2" onclick="gotchecked(this.name,this.id)">
+            <label for="vibrc2"> clipping-2</label>
+        </div>
+        <div class="options">
+            <input id="ptgilati" type="checkbox" name="lat_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgilati"> lat_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgiloni" type="checkbox" name="long_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiloni"> long_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgialt" type="checkbox" name="alt_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgialt"> alt_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgivx" type="checkbox" name="vx_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgivx"> vx_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgivy" type="checkbox" name="vy_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgivy"> vy_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgivz" type="checkbox" name="vz_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgivz"> vz_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgiafx" type="checkbox" name="apx" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiafx"> apx</label>
+        </div>
+        <div class="options">
+            <input id="ptgiafy" type="checkbox" name="apy" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiafy"> apy</label>
+        </div>
+        <div class="options">
+            <input id="ptgiafz" type="checkbox" name="apz" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiafz"> apz</label>
+        </div>
+        <div class="options">
+            <input id="ptgiy" type="checkbox" name="yaw_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiy"> yaw_int</label>
+        </div>
+        <div class="options">
+            <input id="ptgiyr" type="checkbox" name="yaw_rate_int" onclick="gotchecked(this.name,this.id)">
+            <label for="ptgiyr"> yaw_rate_int</label>
+        </div>
+        <div class="options">
+            <input id="vfrhas" type="checkbox" name="airspeed" onclick="gotchecked(this.name,this.id)">
+            <label for="vfrhas"> airspeed</label>
+        </div>
+        <div class="options">
+            <input id="vfrhgs" type="checkbox" name="groundspeed" onclick="gotchecked(this.name,this.id)">
+            <label for="vfrhgs"> ground speed</label>
+        </div>
+        <div class="options">
+            <input id="vfrhh" type="checkbox" name="heading" onclick="gotchecked(this.name,this.id)">
+            <label for="vfrhh"> heading</label>
+        </div>
+        <div class="options">
+            <input id="vfrht" type="checkbox" name="throttle" onclick="gotchecked(this.name,this.id)">
+            <label for="vfrht"> throttle</label>
+        </div>
+        <div class="options">
+            <input id="vfralt" type="checkbox" name="alt_yfr" onclick="gotchecked(this.name,this.id)">
+            <label for="vfralt"> alt_yfr</label>
+        </div>
+        <div class="options">
+            <input id="vfrhc" type="checkbox" name="climb" onclick="gotchecked(this.name,this.id)">
+            <label for="vfrhc"> climb</label>
+        </div>
+        <div class="options">
+            <input id="aoasaoa" type="checkbox" name="AOA" onclick="gotchecked(this.name,this.id)">
+            <label for="aoasaoa"> AOA</label>
+        </div>
+        <div class="options">
+            <input id="aoasssa" type="checkbox" name="SSA" onclick="gotchecked(this.name,this.id)">
+            <label for="aoasssa"> SSA</label>
+        </div>
+        <div class="options">
+            <input id="griae" type="checkbox" name="alt_ellipsoid" onclick="gotchecked(this.name,this.id)">
+            <label for="griae"> alt_ellipsoid</label>
+        </div>
+        <div class="options">
+            <input id="grisatv" type="checkbox" name="satellites_visible" onclick="gotchecked(this.name,this.id)">
+            <label for="grisatv"> satellites_visible</label>
+        </div>
+        <div class="options">
+            <input id="gricog" type="checkbox" name="cog" onclick="gotchecked(this.name,this.id)">
+            <label for="gricog"> cog</label>
+        </div>
+        <div class="options">
+            <input id="grilat" type="checkbox" name="gps_raw_int_lat" onclick="gotchecked(this.name,this.id)">
+            <label for="grilat"> gps_raw_int_lat</label>
+        </div>
+        <div class="options">
+            <input id="grilon" type="checkbox" name="gps_raw_int_lon" onclick="gotchecked(this.name,this.id)">
+            <label for="grilon"> gps_raw_int_lon</label>
+        </div>
+        <div class="options">
+            <input id="grialt" type="checkbox" name="gps_raw_int_alt" onclick="gotchecked(this.name,this.id)">
+            <label for="grialt"> gps_raw_int_alt</label>
+        </div>
+        <div class="options">
+            <input id="grivel" type="checkbox" name="gps_raw_int_vel" onclick="gotchecked(this.name,this.id)">
+            <label for="grivel"> gps_raw_int_vel</label>
+        </div>
+        <div class="options">
+            <input id="griepv" type="checkbox" name="epv" onclick="gotchecked(this.name,this.id)">
+            <label for="griepv"> epv</label>
+        </div>
+        <div class="options">
+            <input id="grieph" type="checkbox" name="eph" onclick="gotchecked(this.name,this.id)">
+            <label for="grieph"> eph</label>
+        </div>
+        <div class="options">
+            <input id="gpsilon" type="checkbox" name="lon" onclick="gotchecked(this.name,this.id)">
+            <label for="gpsilon"> lon</label>
+        </div>
+        <div class="options">
+            <input id="gpsilat" type="checkbox" name="lon" onclick="gotchecked(this.name,this.id)">
+            <label for="gpsilat"> lon</label>
+        </div>
+        <div class="options">
+            <input id="grift" type="checkbox" name="fix_type" onclick="gotchecked(this.name,this.id)">
+            <label for="grift"> fix_type</label>
+        </div>
+        <div class="options">
+            <input id="sptemp" type="checkbox" name="scaled_press_temperature" onclick="gotchecked(this.name,this.id)">
+            <label for="sptemp"> scaled_press_temperature</label>
+        </div>
+        <div class="options">
+            <input id="sptpdiff" type="checkbox" name="temperature_press_diff" onclick="gotchecked(this.name,this.id)">
+            <label for="sptpdiff"> temperature_press_diff</label>
+        </div>
+        <div class="options">
+            <input id="sppdiff" type="checkbox" name="press_diff" onclick="gotchecked(this.name,this.id)">
+            <label for="sppdiff"> press_diff</label>
+        </div>
+        <div class="options">
+            <input id="sppabs" type="checkbox" name="press_abs" onclick="gotchecked(this.name,this.id)">
+            <label for="sppabs"> press_abs</label>
+        </div>
+        <div class="options">
+            <input id="sp2temp" type="checkbox" name="scaled_press2_temperature" onclick="gotchecked(this.name,this.id)">
+            <label for="sp2temp"> scaled_press_temperature</label>
+        </div>
+        <div class="options">
+            <input id="sp2tpdiff" type="checkbox" name="temperature_press_diff2" onclick="gotchecked(this.name,this.id)">
+            <label for="sp2tpdiff"> temperature_press_diff2</label>
+        </div>
+        <div class="options">
+            <input id="sp2pdiff" type="checkbox" name="press_diff2" onclick="gotchecked(this.name,this.id)">
+            <label for="sp2pdiff"> press_diff2</label>
+        </div>
+        <div class="options">
+            <input id="sp2pabs" type="checkbox" name="press_abs2" onclick="gotchecked(this.name,this.id)">
+            <label for="sp2pabs"> press_abs2</label>
+        </div>
+        <div class="options">
+            <input id="rizmag" type="checkbox" name="zmag" onclick="gotchecked(this.name,this.id)">
+            <label for="rizmag"> zmag</label>
+        </div>
+        <div class="options">
+            <input id="riymag" type="checkbox" name="ymag" onclick="gotchecked(this.name,this.id)">
+            <label for="riymag"> ymag</label>
+        </div>
+        <div class="options">
+            <input id="rixmag" type="checkbox" name="xmag" onclick="gotchecked(this.name,this.id)">
+            <label for="rixmag"> xmag</label>
+        </div>
+        <div class="options">
+            <input id="riygyro" type="checkbox" name="ygyro" onclick="gotchecked(this.name,this.id)">
+            <label for="riygyro"> ygyro</label>
+        </div>
+        <div class="options">
+            <input id="rizgyro" type="checkbox" name="zgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="rizgyro"> zgyro</label>
+        </div>
+        <div class="options">
+            <input id="rixgyro" type="checkbox" name="xgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="rixgyro"> xgyro</label>
+        </div>
+        <div class="options">
+            <input id="rixacc" type="checkbox" name="xacc" onclick="gotchecked(this.name,this.id)">
+            <label for="rixacc"> xacc</label>
+        </div>
+        <div class="options">
+            <input id="riyacc" type="checkbox" name="yacc" onclick="gotchecked(this.name,this.id)">
+            <label for="riyacc"> yacc</label>
+        </div>
+        <div class="options">
+            <input id="rizacc" type="checkbox" name="zacc" onclick="gotchecked(this.name,this.id)">
+            <label for="rizacc"> zacc</label>
+        </div>
+        <div class="options">
+            <input id="ritemp" type="checkbox" name="temperature" onclick="gotchecked(this.name,this.id)">
+            <label for="ritemp"> temperature</label>
+        </div>
+                <div class="options">
+            <input id="si2zmag" type="checkbox" name="scaled_2_zmag" onclick="gotchecked(this.name,this.id)">
+            <label for="si2zmag"> Scaled_2_zmag</label>
+        </div>
+        <div class="options">
+            <input id="si2ymag" type="checkbox" name="scaled_2_ymag" onclick="gotchecked(this.name,this.id)">
+            <label for="si2ymag"> Scaled_2_ymag</label>
+        </div>
+        <div class="options">
+            <input id="si2xmag" type="checkbox" name="scaled_2_xmag" onclick="gotchecked(this.name,this.id)">
+            <label for="si2xmag"> Scaled_2_xmag</label>
+        </div>
+        <div class="options">
+            <input id="si2ygyro" type="checkbox" name="scaled_2_ygyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si2ygyro"> Scaled_2_ygyro</label>
+        </div>
+        <div class="options">
+            <input id="si2zgyro" type="checkbox" name="scaled_2_zgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si2zgyro"> Scaled_2_zgyro</label>
+        </div>
+        <div class="options">
+            <input id="si2xgyro" type="checkbox" name="scaled_2_xgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si2xgyro"> Scaled_2_xgyro</label>
+        </div>
+        <div class="options">
+            <input id="si2xacc" type="checkbox" name="scaled_2_xacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si2xacc"> Scaled_2_xacc</label>
+        </div>
+        <div class="options">
+            <input id="si2yacc" type="checkbox" name="scaled_2_yacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si2yacc"> Scaled_2_yacc</label>
+        </div>
+        <div class="options">
+            <input id="si2zacc" type="checkbox" name="scaled_2_zacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si2zacc"> Scaled_2_zacc</label>
+        </div>
+        <div class="options">
+            <input id="si2temp" type="checkbox" name="scaled_2_temperature" onclick="gotchecked(this.name,this.id)">
+            <label for="si2temp">Scaled_2_temperature</label>
+        </div>
+                        <div class="options">
+            <input id="si3zmag" type="checkbox" name="scaled_3_zmag" onclick="gotchecked(this.name,this.id)">
+            <label for="si3zmag"> Scaled_3_zmag</label>
+        </div>
+        <div class="options">
+            <input id="si3ymag" type="checkbox" name="scaled_3_ymag" onclick="gotchecked(this.name,this.id)">
+            <label for="si3ymag"> Scaled_3_ymag</label>
+        </div>
+        <div class="options">
+            <input id="si3xmag" type="checkbox" name="scaled_3_xmag" onclick="gotchecked(this.name,this.id)">
+            <label for="si3xmag"> Scaled_3_xmag</label>
+        </div>
+        <div class="options">
+            <input id="si3ygyro" type="checkbox" name="scaled_3_ygyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si3ygyro"> Scaled_3_ygyro</label>
+        </div>
+        <div class="options">
+            <input id="si3zgyro" type="checkbox" name="scaled_3_zgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si3zgyro"> Scaled_3_zgyro</label>
+        </div>
+        <div class="options">
+            <input id="si3xgyro" type="checkbox" name="scaled_3_xgyro" onclick="gotchecked(this.name,this.id)">
+            <label for="si3xgyro"> Scaled_3_xgyro</label>
+        </div>
+        <div class="options">
+            <input id="si3xacc" type="checkbox" name="scaled_3_xacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si3xacc"> Scaled_3_xacc</label>
+        </div>
+        <div class="options">
+            <input id="si3yacc" type="checkbox" name="scaled_3_yacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si3yacc"> Scaled_3_yacc</label>
+        </div>
+        <div class="options">
+            <input id="si3zacc" type="checkbox" name="scaled_3_zacc" onclick="gotchecked(this.name,this.id)">
+            <label for="si3zacc"> Scaled_3_zacc</label>
+        </div>
+        <div class="options">
+            <input id="si3temp" type="checkbox" name="scaled_3_temperature" onclick="gotchecked(this.name,this.id)">
+            <label for="si3temp">Scaled_3_temperature</label>
+        </div>
+        <div class="options">
+            <input id="time_usec" type="checkbox" name="time_usec" onclick="gotchecked(this.name,this.id)">
+            <label for="time_usec"> time_usec</label>
+        </div>
+        <div class="options">
+            <input id="tstc1" type="checkbox" name="tc1" onclick="gotchecked(this.name,this.id)">
+            <label for="tstc1"> tc1</label>
+        </div>
+        <div class="options">
+            <input id="tsts1" type="checkbox" name="ts1" onclick="gotchecked(this.name,this.id)">
+            <label for="tsts1"> ts1</label>
+        </div>
+        <div class="options">
+            <input id="time_usec" type="checkbox" name="time_usec" onclick="gotchecked(this.name,this.id)">
+            <label for="time_usec"> time_usec</label>
+        </div>
+    </form>
+</body>
+    <script src="http://smoothiecharts.org/smoothie.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="/mav/Cesium/Cesium.js"></script>
+    <script src="/mav/bundle.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datapopup.js') }}">
+    </script>
+</html>
