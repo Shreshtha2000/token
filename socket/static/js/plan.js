@@ -1,4 +1,4 @@
-var homec = [149.1652373, 0];
+var homec = [-1, -1];
 var gpslat,gpslon;
 var socket;
         $(document).ready(function(){
@@ -7,7 +7,7 @@ var socket;
     socket.on('gpsilat', function(msg) {
      let num = parseFloat(msg.message);
     gpslat = num / 10000000.00;
-    if(homec[1]==0)
+    if(homec[1]==-1)
      {
 
     homec[1] = gpslat;
@@ -20,7 +20,7 @@ var socket;
     socket.on('gpsilon', function(msg) {
     let num = parseFloat(msg.message);
      gpslon = num / 10000000.00;
-     if(homec[0]==0){
+     if(homec[0]==-1){
     homec[0] = gpslon;
     sethomepos();
       }
@@ -55,9 +55,8 @@ const raster = new ol.layer.Tile({
 
 
 var home = new ol.Feature({
-  geometry : new ol.geom.Point(ol.proj.transform(homec, 'EPSG:4326', 'EPSG:3857')),
+  geometry : new ol.geom.Point(ol.proj.transform([0,0], 'EPSG:4326', 'EPSG:3857')),
 });
-
 home.setStyle(
   new ol.style.Style({
     image: new ol.style.Icon({
@@ -80,7 +79,7 @@ const map = new ol.Map({
   layers: [raster, vector],
   target: 'map',
   view: new ol.View({
-    center: ol.proj.transform(homec, 'EPSG:4326', 'EPSG:3857'),
+    center: ol.proj.transform([0,0], 'EPSG:4326', 'EPSG:3857'),
     zoom: 10,
   }),
 });
@@ -159,6 +158,7 @@ document.getElementById('upload').addEventListener('click',uploadmiss,false);
 function uploadmiss()
 {
 socket.emit("da",{data:misslist});
+socket.emit("line",{data:fdlcc});
 };
 var sv ;
 var lv;

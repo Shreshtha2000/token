@@ -22,7 +22,7 @@ app.config['USE_RELOADER']=False
 
 
 g1=[]
-
+linedata = []
 socketio = SocketIO(app, async_mode=None, logger=True, engineio_logger=True)
 
 thread1 = Thread()
@@ -354,6 +354,9 @@ def sendMessage():
             print(decimal)
             binary=[]
             failmes=[]
+            global linedata
+            if linedata is not None:
+                socketio.emit('linedata',{'message':linedata},namespace='/test')
             while  decimal>=1:
                 r = decimal%2
                 decimal = int(decimal/2)
@@ -437,9 +440,6 @@ def sendMessage():
                 socketio.emit("armstatus",{'message':"DISARMED"},namespace='/test')
             
         socketio.sleep(0.000005)
-
-        
-
 
 class User:
     def __init__(self, id, username, password):
@@ -531,7 +531,7 @@ def planindex():
 def test_connect():
     global thread1
     global thread2
-    global thread3
+    
 
     print('Client connected')
     if not thread1.is_alive():
@@ -600,13 +600,21 @@ def index1(mssg):
     uploadmission(misdata)
     misdata=[]
 
+@socketio.on('line',namespace='/test')
+def linemark(msg):
+    global linedata
+    global thread3
+    linedata=msg['data']
+
+
+
 master = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 print(master.wait_heartbeat())
 master.mav.command_long_send(
         master.target_system, master.target_component,
         mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL, 0,
         30, # The MAVLink message ID
-        1e6 / 10, # The interval between two messages in microseconds. Set to -1 to disable and 0 to request default rate.
+        1e6 / 100, # The interval between two messages in microseconds. Set to -1 to disable and 0 to request default rate.
         0, 0, 0, 0, # Unused parameters
         0, # Target address of message stream (if message has target address fields). 0: Flight-stack default (recommended), 1: address of requestor, 2: broadcast.
     )
@@ -622,7 +630,7 @@ master.mav.command_long_send(
         master.target_system, master.target_component,
         mavutil.mavlink.MAV_CMD_SET_MESSAGE_INTERVAL, 0,
         33, # The MAVLink message ID
-        0, # The interval between two messages in microseconds. Set to -1 to disable and 0 to request default rate.
+        1e6/100, # The interval between two messages in microseconds. Set to -1 to disable and 0 to request default rate.
         0, 0, 0, 0, # Unused parameters
         0, # Target address of message stream (if message has target address fields). 0: Flight-stack default (recommended), 1: address of requestor, 2: broadcast.
     )

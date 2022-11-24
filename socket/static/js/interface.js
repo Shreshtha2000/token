@@ -7,6 +7,7 @@
                         var pitch = 0;
                         var roll = 0;
                         var yaw = 0;
+                        var lineda;
 
                         var airspeed = "0.0";
                         var groundspeed = "0.0";
@@ -190,6 +191,12 @@
                                         assigndiv(sname, num);
 
                                     });
+                                    socket.on('linedata',function(msg){
+                                        console.log("HEREHEHEHREHE")
+                                        console.log(msg.message);
+                                        lineda=msg.message;
+                                        displaylines();
+                                    })
                                     socket.on('gpsihdg', function(msg) {
                                         sname = 'gpsihdg';
                                         let num = parseFloat(msg.message);
@@ -2121,7 +2128,31 @@
                             map.fitBounds(featureGroup.getBounds())
 
                         }
+                        var polyline;
 
+                        function displaylines()
+                        {
+                            var latlng = [];
+                            console.log("here");
+                            if(polyline)
+                                map.removeLayer(polyline);
+                            console.log(lineda[0]);
+                            for(let i=0;i<lineda.length;i++)
+                            {
+                                latlng.push([lineda[i][1],lineda[i][0]]);
+                            }
+                            console.log(latlng);
+                             var latlang = latlng;
+         
+         // Creating poly line options
+         var multiPolyLineOptions = {color:'red'};
+         
+         // Creating multi poly-lines
+         var multipolyline = L.polyline(latlang , multiPolyLineOptions);
+         
+         // Adding multi poly-line to map
+         multipolyline.addTo(map);
+                        }
                         //vibration chart
 
                         function createvibchart() {
